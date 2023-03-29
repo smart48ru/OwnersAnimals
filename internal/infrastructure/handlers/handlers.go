@@ -6,8 +6,13 @@ import (
 	"OwnersAnimals/internal/infrastructure/service"
 )
 
+type ServiceHandler interface {
+	ReadOwnerByID(id int) (owner.Owner, error)
+	ReadAnimals(ids []int) (animals []animal.Animal, err error)
+}
+
 type Handlers struct {
-	service *service.Service
+	service ServiceHandler
 }
 
 func NewHandler(r *service.Service) *Handlers {
