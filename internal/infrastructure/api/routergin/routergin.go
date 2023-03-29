@@ -1,17 +1,47 @@
 package routergin
 
 import (
+	"OwnersAnimals/internal/entities/animal"
+	"OwnersAnimals/internal/entities/owner"
 	"OwnersAnimals/internal/infrastructure/handlers"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 )
 
-type RouterGin struct {
-	*gin.Engine
-	h *handlers.Handlers
+type Handlers interface {
+	ReadAnimalByID(ids []int) ([]animal.Animal, error)
+	ReadOwner(id int) (owner.Owner, error)
 }
 
+type RouterGin struct {
+	*gin.Engine
+	h Handlers
+}
+
+func NewRouterGin(h *handlers.Handlers) *RouterGin {
+	gin.SetMode(gin.ReleaseMode)
+	ret := gin.New()
+	ret.Use(gin.Recovery())
+
+	ro := &RouterGin{
+		h: h,
+	}
+
+	owner := ret.RouterGroup
+	owner.GET("/owner", ro.GetAllOwner)
+	owner.GET("/owner/:id", ro.GetOwnerByID)
+	owner.POST("/owner", ro.CreateOwner)
+	owner.DELETE("/owner/:id", ro.DeleteOwner)
+	owner.PUT("/owner", ro.OpdateOwner)
+
+	animal := ret.RouterGroup
+	animal.GET("/animalrepo", ro.GetAllAnimal)
+	animal.GET("/animalrepo/:id", ro.GetAllAnimal)
+	ro.Engine = ret
+
+	return ro
+}
 func (g *RouterGin) GetAllOwner(c *gin.Context) {
 
 }
@@ -71,28 +101,4 @@ func (g *RouterGin) OpdateOwner(c *gin.Context) {
 
 func (g *RouterGin) GetAllAnimal(context *gin.Context) {
 
-}
-
-func NewRouterGin(h *handlers.Handlers) *RouterGin {
-	gin.SetMode(gin.ReleaseMode)
-	ret := gin.New()
-	ret.Use(gin.Recovery())
-
-	ro := &RouterGin{
-		h: h,
-	}
-
-	owner := ret.RouterGroup
-	owner.GET("/owner", ro.GetAllOwner)
-	owner.GET("/owner/:id", ro.GetOwnerByID)
-	owner.POST("/owner", ro.CreateOwner)
-	owner.DELETE("/owner/:id", ro.DeleteOwner)
-	owner.PUT("/owner", ro.OpdateOwner)
-
-	animal := ret.RouterGroup
-	animal.GET("/animalrepo", ro.GetAllAnimal)
-	animal.GET("/animalrepo/:id", ro.GetAllAnimal)
-	ro.Engine = ret
-
-	return ro
 }

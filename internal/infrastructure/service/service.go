@@ -7,9 +7,25 @@ import (
 	"OwnersAnimals/internal/infrastructure/repo/ownerrepo"
 )
 
+type OwnerRepo interface {
+	CreateOwner(owner owner.Owner)
+	ReadOwner(id int) (owner.Owner, error)
+	ReadAllOwner()
+	UpdateOwner(id int, owner owner.Owner)
+	DeleteOwner(id int)
+}
+
+type AnimalRepo interface {
+	CreateAnimal(an animal.Animal)
+	ReadAnimal(id int) (animal.Animal, error)
+	ReadAllAnimal()
+	UpdateAnimal(id int, an animal.Animal)
+	DeleteAnimal(id int)
+}
+
 type Service struct {
-	oRepo *ownerrepo.Owner
-	aRepo *animalrepo.Animal
+	oRepo OwnerRepo
+	aRepo AnimalRepo
 }
 
 func NewService(aRepo *animalrepo.Animal, oRepo *ownerrepo.Owner) *Service {

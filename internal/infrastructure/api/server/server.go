@@ -2,16 +2,22 @@ package server
 
 import (
 	"OwnersAnimals/internal/config"
-	"OwnersAnimals/internal/infrastructure/service"
+	"OwnersAnimals/internal/entities/animal"
+	"OwnersAnimals/internal/entities/owner"
 	"context"
 	"fmt"
 	"net/http"
 	"time"
 )
 
+type Service interface {
+	ReadOwnerByID(id int) (owner.Owner, error)
+	ReadAnimals(ids []int) (animals []animal.Animal, err error)
+}
+
 type Server struct {
 	srv  http.Server
-	serv *service.Service
+	serv Service
 }
 
 func NewServer(conf config.API, h http.Handler) *Server {
@@ -34,7 +40,7 @@ func (s *Server) Stop() {
 	s.srv.Shutdown(ctx)
 	cancel()
 }
-func (s *Server) Start(eap *service.Service) {
+func (s *Server) Start(eap Service) {
 	s.serv = eap
 	go s.srv.ListenAndServe()
 }
