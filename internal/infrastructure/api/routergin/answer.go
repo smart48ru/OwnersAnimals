@@ -3,6 +3,7 @@ package routergin
 import (
 	"OwnersAnimals/internal/entities/animal"
 	"OwnersAnimals/internal/entities/owner"
+	"strings"
 )
 
 type GinAnswerError struct {
@@ -23,7 +24,7 @@ type GinAnswerOwner struct {
 
 func (o *GinAnswerOwner) Serialize(owner owner.Owner, animals []GinAnswerAnimal) {
 	o.Age = owner.Age
-	o.Name = owner.Name
+	o.Name = strings.ToUpper(owner.Name)
 	o.Age = owner.Age
 	o.Animals = animals
 }
@@ -42,10 +43,10 @@ type GinAnswerAnimals struct {
 func (a *GinAnswerAnimals) Serialize(animals []animal.Animal) {
 	ginAnimal := GinAnswerAnimal{}
 	var GinAnimals []GinAnswerAnimal
-	for _, animal := range animals {
-		ginAnimal.Color = animal.Color
-		ginAnimal.NickName = animal.NickName
-		ginAnimal.Type = animal.Type
+	for _, an := range animals {
+		ginAnimal.Color = an.Color
+		ginAnimal.NickName = an.NickName
+		ginAnimal.Type = an.Type
 		GinAnimals = append(GinAnimals, ginAnimal)
 	}
 }
